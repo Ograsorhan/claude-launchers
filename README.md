@@ -48,3 +48,14 @@ Windows PowerShell 5.1 altında `tests/Test-Package.ps1` ile sözdizimi, ayar ok
 Temiz bir Windows bilgisayarda tüm programların sıfırdan kurulumu henüz uçtan uca doğrulanmadı. Uygulama sürümleri ve model uyumluluğu değişebilir. Hata olursa kurulum penceresi nedeni gösterir; pencereyi kapatmadan hata metnini paylaşın. Taranmış belgeler için OCR dahil değildir.
 
 Resmi kaynaklar: [Claude Code kurulumu](https://code.claude.com/docs/en/setup), [Ollama ve Claude Code](https://docs.ollama.com/integrations/claude-code), [Qwen 3.5 4B](https://ollama.com/library/qwen3.5:4b), [FreeLLMAPI sürümleri](https://github.com/tashfeenahmed/freellmapi/releases/tag/v0.15.0).
+
+## v0.2.2: işi tamamlama ve yanıt kalitesi
+
+- Ortak çalışma kuralları, eylem talebinde dosya/araç kullanmayı, aynı onayı tekrar istememeyi, istenen özellikleri takip etmeyi ve test edilmemiş işe hazır dememeyi açıkça belirtir. Çıktılar `Ciktilar/<proje-adi>/` altında düzenlenir.
+- Bulut modunda düşünme açılır: 4096 token düşünme bütçesi ve 8192 token çıktı sınırı. Önceden kullanıcı ayarlarında kalmış düşünmeyi kapatma değeri bu başlatıcı için geçersiz kılınır. Sağlayıcının düşünme desteği ve raporlaması değişebilir.
+- `FreeModel=auto` olduğunda kullanıcı kataloğunda varsa `nvidia/nemotron-3.5-super-vl:free` tercih edilir; yoksa mevcut `auto` yönlendirmesi kullanılır. Kullanıcının açıkça seçtiği model/profil değiştirilmez. Başkasının API anahtarı veya özel zinciri pakete dahil değildir.
+- Yerel 4B modelin kaynak kullanımı ayarları korunur. Bulut düşünme tercihi yerel modeli yavaşlatmak için uygulanmaz.
+
+Güncelleme: Yeni ZIP'i ayrı klasöre çıkarıp daha önce kullandığınız `KUR.cmd` veya `KUR-BULUT.cmd` dosyasını yeniden çalıştırın. Kurucu uygulama dosyalarını günceller, mevcut `launcher-config.json` ayarını korur. Ardından eski Claude penceresini kapatıp kısayoldan yeni oturum açın.
+
+Bu değişiklikler modelin her görevi kusursuz yapacağını garanti etmez. Geliştirme bilgisayarında Nemotron ile dosyayı okuma, hatayı düzeltme ve PowerShell komutu çalıştırma denemesi 6/6 testle tamamlandı; bu başka hesapların kota, donanım veya model erişiminin testi değildir.

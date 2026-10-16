@@ -60,13 +60,24 @@ function Start-FreeService {
     Wait-LocalService 'http://127.0.0.1:31415/api/auth/status'
 }
 
-function New-ClaudeSettings([string]$BaseUrl, [string]$Key, [string]$Model) {
-    return @{ model=$Model; alwaysThinkingEnabled=$false; env=@{
+function Resolve-FreeModel([string]$ConfiguredModel, $AvailableModels) {
+    if ($ConfiguredModel -ne 'auto') { return $ConfiguredModel }
+    $preferred = 'nvidia/nemotron-3.5-super-vl:free'
+    if (@($AvailableModels | Where-Object { $_.id -eq $preferred }).Count) { return $preferred }
+    return 'auto'
+}
+
+function New-ClaudeSettings([string]$BaseUrl, [string]$Key, [string]$Model, [string]$Mode='Local') {
+    $cloud = $Mode -eq 'Free'
+    $thinkingBudget = if ($cloud) { '4096' } else { '0' }
+    $disableThinking = if ($cloud) { '0' } else { '1' }
+    $outputBudget = if ($cloud) { '8192' } else { '4096' }
+    return @{ model=$Model; alwaysThinkingEnabled=$cloud; env=@{
         ANTHROPIC_BASE_URL=$BaseUrl; ANTHROPIC_AUTH_TOKEN=$Key; ANTHROPIC_API_KEY=$Key
         ANTHROPIC_MODEL=$Model; ANTHROPIC_DEFAULT_OPUS_MODEL=$Model; ANTHROPIC_DEFAULT_SONNET_MODEL=$Model
         ANTHROPIC_DEFAULT_HAIKU_MODEL=$Model; CLAUDE_CODE_SUBAGENT_MODEL=$Model
-        CLAUDE_CODE_DISABLE_AUTO_MEMORY='1'; CLAUDE_CODE_MAX_OUTPUT_TOKENS='4096'
-        MAX_THINKING_TOKENS='0'; CLAUDE_CODE_DISABLE_THINKING='1'
+        CLAUDE_CODE_DISABLE_AUTO_MEMORY='1'; CLAUDE_CODE_MAX_OUTPUT_TOKENS=$outputBudget
+        MAX_THINKING_TOKENS=$thinkingBudget; CLAUDE_CODE_DISABLE_THINKING=$disableThinking
     }}
 }
 
@@ -90,6 +101,7 @@ function Invoke-ClaudeLauncher([ValidateSet('Local','Free')][string]$Mode, [stri
             $model = $config.FreeModel
             $models = Invoke-RestMethod "$base/v1/models" -Headers @{Authorization="Bearer $key"} -TimeoutSec 15
             if (-not @($models.data).Count) { throw 'Bulut modeli yok. FreeLLMAPI uygulamasinda kendi saglayici anahtarinizi ekleyin.' }
+            $model = Resolve-FreeModel $config.FreeModel $models.data
         }
         $rules = Join-Path $script:PackageRoot 'Calisma-kurallari.md'
         $plugin = Join-Path $script:PackageRoot 'devam-destegi'
@@ -98,7 +110,7 @@ function Invoke-ClaudeLauncher([ValidateSet('Local','Free')][string]$Mode, [stri
         $tempDirectory = Join-Path $env:LOCALAPPDATA ('ClaudeLaunchers\sessions\' + [Guid]::NewGuid().ToString('N'))
         New-Item -ItemType Directory -Path $tempDirectory -Force | Out-Null
         $settingsPath = Join-Path $tempDirectory 'settings.json'
-        New-ClaudeSettings $base $key $model | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $settingsPath -Encoding UTF8
+        New-ClaudeSettings $base $key $model $Mode | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $settingsPath -Encoding UTF8
         # Keep the console attached so interactive Claude retains terminal input/output.
         & $cli --settings $settingsPath --model $model --tools default --append-system-prompt-file $rules --plugin-dir $plugin @Arguments
         $script:LauncherExitCode = $LASTEXITCODE
