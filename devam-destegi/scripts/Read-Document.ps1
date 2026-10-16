@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Path,[int]$MaxChars=16000,[int]$Offset=0,[int]$Pages=20)
+﻿param([Parameter(Mandatory=$true)][string]$Path,[int]$MaxChars=16000,[int]$Offset=0,[int]$Pages=20)
 $ErrorActionPreference='Stop'
 $file=(Resolve-Path -LiteralPath $Path).Path
 $ext=[IO.Path]::GetExtension($file).ToLowerInvariant()

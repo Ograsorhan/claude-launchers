@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 try {
     . (Join-Path $PSScriptRoot 'Ortak.ps1')
     $result = Invoke-ClaudeLauncher -Mode Local -Arguments $args

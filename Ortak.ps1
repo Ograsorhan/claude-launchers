@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $script:PackageRoot = $PSScriptRoot
 
 function Get-LauncherConfig {

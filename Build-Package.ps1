@@ -1,4 +1,4 @@
-param([string]$Destination=(Join-Path $PSScriptRoot 'dist'))
+﻿param([string]$Destination=(Join-Path $PSScriptRoot 'dist'))
 $ErrorActionPreference='Stop'
 New-Item -ItemType Directory -Path $Destination -Force | Out-Null
 $zip = Join-Path $Destination 'Claude-Launchers-Windows.zip'

@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 try {
     . (Join-Path $PSScriptRoot 'Ortak.ps1')
     $config = Get-LauncherConfig

@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $failed = @()
 Get-ChildItem -LiteralPath $root -Recurse -Filter '*.ps1' | ForEach-Object {
@@ -66,3 +66,5 @@ exit /b 7
     if (Test-Path -LiteralPath $appDir) { Remove-Item -LiteralPath $appDir -Force }
     Remove-Item -LiteralPath $testDir -Force
 }
+# The mock deliberately exits with 7. Do not leak that native exit status to CI.
+exit 0

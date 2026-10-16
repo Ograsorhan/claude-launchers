@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet('Local','Free')][string]$Mode='Local',
     [ValidatePattern('^[a-zA-Z0-9][a-zA-Z0-9._:/-]*$')][string]$Model='qwen3.5:4b',
     [switch]$NoLaunch,
