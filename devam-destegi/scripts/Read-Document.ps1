@@ -7,8 +7,8 @@ if ($MaxChars -lt 1 -or $MaxChars -gt 100000 -or $Offset -lt 0) { throw 'Gecersi
 if ($ext -eq '.rtf') {
     throw 'Eski DOC/RTF bu ortamda dogrulanamadi; Word ile DOCX olarak farkli kaydedin ve DOCX dosyasini verin. Dosya degistirilmedi.'
 } else {
-    $python=Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-    if(-not (Test-Path -LiteralPath $python)){throw 'Belge okuyucu Python ortami bulunamadi.'}
+    $python=Join-Path (Split-Path (Split-Path $PSScriptRoot)) '.venv\Scripts\python.exe'
+    if(-not (Test-Path -LiteralPath $python)){throw 'Belge okuyucu bulunamadi. Once KUR.cmd dosyasini calistirin.'}
     & $python (Join-Path $PSScriptRoot 'read_document.py') $file --max-chars $MaxChars --offset $Offset --pages $Pages
     if($LASTEXITCODE -ne 0){throw 'Belge okunamadi; yukaridaki hata mesajina bakin.'}
 }

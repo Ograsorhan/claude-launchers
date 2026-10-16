@@ -7,3 +7,10 @@ __pycache__/
 .claude/
 settings.local.json
 *session*.json
+launcher-config.json
+installed-mode.txt
+.venv/
+tools/
+downloads/
+*.zip
+dist/
