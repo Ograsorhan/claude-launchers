@@ -7,6 +7,6 @@ try {
     $mode = 'Local'
     $modeFile = Join-Path $PSScriptRoot 'installed-mode.txt'
     if (Test-Path -LiteralPath $modeFile) { $mode = (Get-Content -LiteralPath $modeFile -Raw).Trim() }
-    $result = Invoke-ClaudeLauncher -Mode $mode -Arguments $args
-    exit $result
+    Invoke-ClaudeLauncher -Mode $mode -Arguments $args
+    exit $script:LauncherExitCode
 } catch { Write-Host "Hata: $($_.Exception.Message)" -ForegroundColor Red; exit 1 }

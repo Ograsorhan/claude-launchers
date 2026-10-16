@@ -72,6 +72,7 @@ function New-ClaudeSettings([string]$BaseUrl, [string]$Key, [string]$Model) {
 
 function Invoke-ClaudeLauncher([ValidateSet('Local','Free')][string]$Mode, [string[]]$Arguments) {
     $tempDirectory = $null
+    $script:LauncherExitCode = 1
     try {
         $cli = Get-ClaudeCommand
         if (-not $cli) { throw 'Claude Code bulunamadi. KUR.cmd dosyasini calistirin.' }
@@ -98,8 +99,9 @@ function Invoke-ClaudeLauncher([ValidateSet('Local','Free')][string]$Mode, [stri
         New-Item -ItemType Directory -Path $tempDirectory -Force | Out-Null
         $settingsPath = Join-Path $tempDirectory 'settings.json'
         New-ClaudeSettings $base $key $model | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $settingsPath -Encoding UTF8
-        & $cli --settings $settingsPath --model $model --tools default --append-system-prompt-file $rules --plugin-dir $plugin @Arguments | Out-Host
-        return $LASTEXITCODE
+        # Keep the console attached so interactive Claude retains terminal input/output.
+        & $cli --settings $settingsPath --model $model --tools default --append-system-prompt-file $rules --plugin-dir $plugin @Arguments
+        $script:LauncherExitCode = $LASTEXITCODE
     } finally {
         if ($tempDirectory -and (Test-Path -LiteralPath (Join-Path $tempDirectory 'settings.json'))) {
             Remove-Item -LiteralPath (Join-Path $tempDirectory 'settings.json') -Force

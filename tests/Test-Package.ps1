@@ -39,8 +39,8 @@ exit /b 7
     function Start-OllamaService { }
     Set-Content -LiteralPath (Join-Path $testDir 'Calisma-kurallari.md') -Value 'Test rules'
     $env:LAUNCHER_TEST_ARGS = Join-Path $testDir 'args.txt'
-    $code = Invoke-ClaudeLauncher -Mode Local -Arguments @('-p','two words','--max-turns','1')
-    Assert ($code -eq 7) 'Child process exit code was lost.'
+    Invoke-ClaudeLauncher -Mode Local -Arguments @('-p','two words','--max-turns','1')
+    Assert ($script:LauncherExitCode -eq 7) 'Child process exit code was lost.'
     $actualArgs = Get-Content -LiteralPath $env:LAUNCHER_TEST_ARGS -Raw
     Assert ($actualArgs -match 'two words') 'Prompt arguments were lost.'
     $settingsMatch = [regex]::Match($actualArgs,'--settings\s+"?([^"\r\n]+?settings\.json)"?')

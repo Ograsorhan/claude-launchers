@@ -107,8 +107,8 @@ try {
     }
     $config | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $target 'launcher-config.json') -Encoding UTF8
     # Verify the complete launcher, not just the model server, before reporting success.
-    $probeExit = Invoke-ClaudeLauncher -Mode $Mode -Arguments @('-p','Reply with OK.','--max-turns','1')
-    if ($probeExit -ne 0) { throw 'Claude Code baglanti testi basarisiz. Kurulum tamamlandi olarak isaretlenmedi.' }
+    Invoke-ClaudeLauncher -Mode $Mode -Arguments @('-p','Reply with OK.','--max-turns','1')
+    if ($script:LauncherExitCode -ne 0) { throw 'Claude Code baglanti testi basarisiz. Kurulum tamamlandi olarak isaretlenmedi.' }
     Set-Content -LiteralPath (Join-Path $target 'installed-mode.txt') -Value $Mode -Encoding ASCII
     New-Item -ItemType Directory -Path $config.Workspace -Force | Out-Null
     $shell = New-Object -ComObject WScript.Shell
